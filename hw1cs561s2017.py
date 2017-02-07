@@ -171,13 +171,13 @@ pl = 1
 def play(dad,node,player,depth,maxDepth,state,minmax,alpha,beta):
     val = minmax*-6000
     if depth == maxDepth:
-        val = evaluateState(player*-1,state)
+        val = evaluateState(pl,state)
         logs.append(node+','+str(depth)+','+s[val]+','+s[alpha]+','+s[beta])
         return (val,state)
     res = copy.copy(state)
     moves = getMoves(player,state)
     if dad == 'pass' and len(moves) == 0:
-        val = evaluateState(player,state)
+        val = evaluateState(pl,state)
         logs.append(node+','+str(depth)+','+s[val]+','+s[alpha]+','+s[beta])
         return (val,state)
     logs.append(node+','+str(depth)+','+s[val]+','+s[alpha]+','+s[beta])
