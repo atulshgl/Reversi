@@ -1,8 +1,8 @@
 import os, sys, copy
 
 #inputFilePath = sys.argv[1]
-inputFilePath = os.path.dirname(os.path.realpath(__file__)) + "/SampleTestCases/input15.txt"
-outputFilePath = os.path.dirname(os.path.realpath(__file__)) + "/SampleTestCases/output15s.txt"
+inputFilePath = os.path.dirname(os.path.realpath(__file__)) + "/SampleTestCases/input1.txt"
+outputFilePath = os.path.dirname(os.path.realpath(__file__)) + "/SampleTestCases/output.txt"
 
 s = dict()
 for i in range(-5999,6000):
@@ -171,65 +171,48 @@ def play(dad,node,player,depth,maxDepth,state,minmax,alpha,beta):
     val = minmax*-6000
     if depth == maxDepth:
         val = evaluateState(player*-1,state)
-        #print 'lf',dad, node,depth,minmax,val,alpha,beta
         logs.append(node+','+str(depth)+','+s[val]+','+s[alpha]+','+s[beta])
         return (val,state)
     res = copy.copy(state)
     moves = getMoves(player,state)
-    #print moves
-    #outputState(outputFilePath,state)
     if dad == 'pass' and len(moves) == 0:
         val = evaluateState(player,state)
-        #print '2p',dad, node,depth,minmax,val,alpha,beta
         logs.append(node+','+str(depth)+','+s[val]+','+s[alpha]+','+s[beta])
         return (val,state)
-    #print 'b1',dad, node,depth,minmax,val,alpha,beta
     logs.append(node+','+str(depth)+','+s[val]+','+s[alpha]+','+s[beta])
     if len(moves) == 0: ### Pass the move
         (result,st) = play(node,'pass',player*-1,depth+1,maxDepth,copy.copy(state),minmax*-1,alpha,beta)
         if minmax == 1:
             val = max(val,result)
             if val >= beta:
-                #print 'bx',dad,node,depth,minmax,val,alpha,beta
                 logs.append(node+','+str(depth)+','+s[val]+','+s[alpha]+','+s[beta])
                 return (val,res)
             alpha = max(alpha,val)
         elif minmax == -1:
             val = min(val,result)
             if val<= alpha:
-                #print 'bn',dad,node,depth,minmax,val,alpha,beta
                 logs.append(node+','+str(depth)+','+s[val]+','+s[alpha]+','+s[beta])
                 return (val,res)
             beta = min(beta,val)
-        #print 'bp',dad,node,depth,minmax,val,alpha,beta
         logs.append(node+','+str(depth)+','+s[val]+','+s[alpha]+','+s[beta])
     else:
         for move,directions in sorted(moves.iteritems()):
-            ##print 'Move:', move,'Directions:',directions 
             cur = placePiece(player,move,directions,state)
             (result,st) = play(node,getLocation(move),player*-1,depth+1,maxDepth,copy.copy(cur),minmax*-1,alpha,beta)
-            #print 'b2',dad,node,depth,minmax,result,val,alpha,beta
             if minmax == 1:
-                #val = max(val,result)
                 if val < result:
                     val,res = result, copy.copy(cur)
                 if val >= beta:
-                    #print 'px',dad,node,depth,minmax,val,alpha,beta
                     logs.append(node+','+str(depth)+','+s[val]+','+s[alpha]+','+s[beta])
                     return (val,res)
-                if val > alpha:
-                    alpha=val#,res = val,copy.copy(cur)
+                alpha = max(alpha,val)
             elif minmax == -1:
-                #val = min(val,result)
                 if val > result:
                     val,res = result, copy.copy(cur)
                 if val <= alpha:
-                    #print 'pn',dad,node,depth,minmax,val,alpha,beta
                     logs.append(node+','+str(depth)+','+s[val]+','+s[alpha]+','+s[beta])
                     return (val,res)
-                if val < beta:
-                    beta=val#,res = val,copy.copy(cur)
-            #print 'b3',dad,node,depth,minmax,val,alpha,beta
+                beta = min(beta,val)
             logs.append(node+','+str(depth)+','+s[val]+','+s[alpha]+','+s[beta])
     return (val,res)
 
@@ -238,8 +221,6 @@ def play(dad,node,player,depth,maxDepth,state,minmax,alpha,beta):
 
 outputState(outputFilePath,resState)
 with open(outputFilePath,'a') as doc:
-    print 'Node,Depth,Value,Alpha,Beta'
     doc.write('Node,Depth,Value,Alpha,Beta\n')
     for log in logs:
-        print log
         doc.write(log+'\n')
