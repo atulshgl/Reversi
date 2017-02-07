@@ -167,6 +167,7 @@ def getLocation(move):
     return col[move[1]] + str(move[0]+1)
 
 logs = []
+pl = 1
 def play(dad,node,player,depth,maxDepth,state,minmax,alpha,beta):
     val = minmax*-6000
     if depth == maxDepth:
@@ -217,6 +218,7 @@ def play(dad,node,player,depth,maxDepth,state,minmax,alpha,beta):
     return (val,res)
 
 (player, depth, state) = readInput(inputFilePath)
+pl = player
 (val,resState) = play('null','root',player,0,depth,state,1,-6000,6000)
 
 outputState(outputFilePath,resState)
